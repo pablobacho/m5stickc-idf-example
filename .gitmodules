@@ -1,0 +1,3 @@
+[submodule "components/M5StickC-IDF"]
+	path = components/M5StickC-IDF
+	url = git@github.com:pablobacho/M5StickC-IDF.git

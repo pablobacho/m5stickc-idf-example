@@ -1,32 +1,11 @@
-# Prerequisites
-*.d
+# ESP-IDF
+build/*
+sdkconfig.old
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# .vscode ipch folder
+.vscode/*
+!.vscode/c_cpp_properties.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
