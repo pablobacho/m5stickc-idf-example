@@ -6,13 +6,36 @@
 #include "nvs_flash.h"
 #include "driver/gpio.h"
 
-#include "M5StickC.h"
+#include "m5stickc.h"
 
 static const char *TAG = "MAIN";
 
 esp_err_t event_handler(void *ctx, system_event_t *event)
 {
     return ESP_OK;
+}
+
+void my_m5_event_handler(void * handler_arg, esp_event_base_t base, int32_t id, void * event_data) {
+    if(base != M5BUTTON_EVENT_BASE) {
+        return;
+    }
+
+    switch(id) {
+        case M5BUTTON_BUTTON_A_CLICK:
+            TFT_resetclipwin();
+            TFT_fillScreen(TFT_WHITE);
+            TFT_print("Click!", CENTER, (M5DISPLAY_HEIGHT-24)/2);
+            vTaskDelay(1000/portTICK_PERIOD_MS);
+            TFT_fillScreen(TFT_WHITE);
+        break;
+        case M5BUTTON_BUTTON_A_HOLD:
+            TFT_resetclipwin();
+            TFT_fillScreen(TFT_WHITE);
+            TFT_print("Hold!", CENTER, (M5DISPLAY_HEIGHT-24)/2);
+            vTaskDelay(1000/portTICK_PERIOD_MS);
+            TFT_fillScreen(TFT_WHITE);
+        break;
+    }
 }
 
 void app_main(void)
@@ -35,7 +58,13 @@ void app_main(void)
     ESP_ERROR_CHECK( esp_wifi_start() );
     ESP_ERROR_CHECK( esp_wifi_connect() );
 
-    m5stickc_init();
+    // Initialize M5StickC
+    // This initializes the event loop, power, button and display
+    m5_init();
+
+    // Register for button events
+    esp_event_handler_register_with(m5_event_loop, M5BUTTON_EVENT_BASE, M5BUTTON_BUTTON_A_CLICK, my_m5_event_handler, NULL);
+    esp_event_handler_register_with(m5_event_loop, M5BUTTON_EVENT_BASE, M5BUTTON_BUTTON_A_HOLD, my_m5_event_handler, NULL);
 
     font_rotate = 0;
     text_wrap = 0;
@@ -49,6 +78,30 @@ void app_main(void)
     TFT_fillScreen(TFT_WHITE);
     _bg = TFT_WHITE;
     _fg = TFT_MAGENTA;
-    TFT_print("Test", CENTER, (DISPLAY_HEIGHT-24)/2);
+    char backlight_str[6];
+
+    // Backlight level test
+    for(uint8_t i=0x0F; i>0; --i) {
+        m5display_set_backlight_level(i);
+        TFT_fillScreen(TFT_WHITE);
+        sprintf(backlight_str, "%d", i);
+        TFT_print("Backlight test", CENTER, (M5DISPLAY_HEIGHT-24)/2 +12);
+        TFT_print(backlight_str, CENTER, (M5DISPLAY_HEIGHT-24)/2 -12);
+        ESP_LOGD(TAG, "Backlight: %d", i);
+        vTaskDelay(500/portTICK_PERIOD_MS);
+    }
+    for(uint8_t i=0x00; i<=0x0F; ++i) {
+        m5display_set_backlight_level(i);
+        TFT_fillScreen(TFT_WHITE);
+        sprintf(backlight_str, "%d", i);
+        TFT_print("Backlight test", CENTER, (M5DISPLAY_HEIGHT-24)/2 +12);
+        TFT_print(backlight_str, CENTER, (M5DISPLAY_HEIGHT-24)/2 -12);
+        ESP_LOGD(TAG, "Backlight: %d", i);
+        vTaskDelay(500/portTICK_PERIOD_MS);
+    }
+
+    // Test buttons
+    TFT_fillScreen(TFT_WHITE);
+    TFT_print("Press or hold button", CENTER, (M5DISPLAY_HEIGHT-24)/2);
 }
 
