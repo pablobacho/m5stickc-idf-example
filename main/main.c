@@ -79,9 +79,17 @@ void app_main(void)
     _bg = TFT_WHITE;
     _fg = TFT_MAGENTA;
     char backlight_str[6];
+    vTaskDelay(5000/portTICK_PERIOD_MS);
+
+    ESP_LOGD(TAG, "Turning backlight off");
+    m5display_off();
+    vTaskDelay(5000/portTICK_PERIOD_MS);
+    ESP_LOGD(TAG, "Turning backlight on");
+    m5display_on();
+    vTaskDelay(5000/portTICK_PERIOD_MS);
 
     // Backlight level test
-    for(uint8_t i=0x0F; i>0; --i) {
+    for(uint8_t i=7; i>0; --i) {
         m5display_set_backlight_level(i);
         TFT_fillScreen(TFT_WHITE);
         sprintf(backlight_str, "%d", i);
@@ -90,7 +98,7 @@ void app_main(void)
         ESP_LOGD(TAG, "Backlight: %d", i);
         vTaskDelay(500/portTICK_PERIOD_MS);
     }
-    for(uint8_t i=0x00; i<=0x0F; ++i) {
+    for(uint8_t i=0; i<=7; ++i) {
         m5display_set_backlight_level(i);
         TFT_fillScreen(TFT_WHITE);
         sprintf(backlight_str, "%d", i);
