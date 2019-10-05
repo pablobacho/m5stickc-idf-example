@@ -16,25 +16,41 @@ esp_err_t event_handler(void *ctx, system_event_t *event)
 }
 
 void my_m5_event_handler(void * handler_arg, esp_event_base_t base, int32_t id, void * event_data) {
-    if(base != M5BUTTON_EVENT_BASE) {
-        return;
+    if(base == m5button_a.esp_event_base) {
+        switch(id) {
+            case M5BUTTON_BUTTON_CLICK_EVENT:
+                TFT_resetclipwin();
+                TFT_fillScreen(TFT_WHITE);
+                TFT_print("Click A!", CENTER, (M5DISPLAY_HEIGHT-24)/2);
+                vTaskDelay(1000/portTICK_PERIOD_MS);
+                TFT_fillScreen(TFT_WHITE);
+            break;
+            case M5BUTTON_BUTTON_HOLD_EVENT:
+                TFT_resetclipwin();
+                TFT_fillScreen(TFT_WHITE);
+                TFT_print("Hold A!", CENTER, (M5DISPLAY_HEIGHT-24)/2);
+                vTaskDelay(1000/portTICK_PERIOD_MS);
+                TFT_fillScreen(TFT_WHITE);
+            break;
+        }
     }
-
-    switch(id) {
-        case M5BUTTON_BUTTON_A_CLICK:
-            TFT_resetclipwin();
-            TFT_fillScreen(TFT_WHITE);
-            TFT_print("Click!", CENTER, (M5DISPLAY_HEIGHT-24)/2);
-            vTaskDelay(1000/portTICK_PERIOD_MS);
-            TFT_fillScreen(TFT_WHITE);
-        break;
-        case M5BUTTON_BUTTON_A_HOLD:
-            TFT_resetclipwin();
-            TFT_fillScreen(TFT_WHITE);
-            TFT_print("Hold!", CENTER, (M5DISPLAY_HEIGHT-24)/2);
-            vTaskDelay(1000/portTICK_PERIOD_MS);
-            TFT_fillScreen(TFT_WHITE);
-        break;
+    if(base == m5button_b.esp_event_base) {
+        switch(id) {
+            case M5BUTTON_BUTTON_CLICK_EVENT:
+                TFT_resetclipwin();
+                TFT_fillScreen(TFT_WHITE);
+                TFT_print("Click B!", CENTER, (M5DISPLAY_HEIGHT-24)/2);
+                vTaskDelay(1000/portTICK_PERIOD_MS);
+                TFT_fillScreen(TFT_WHITE);
+            break;
+            case M5BUTTON_BUTTON_HOLD_EVENT:
+                TFT_resetclipwin();
+                TFT_fillScreen(TFT_WHITE);
+                TFT_print("Hold B!", CENTER, (M5DISPLAY_HEIGHT-24)/2);
+                vTaskDelay(1000/portTICK_PERIOD_MS);
+                TFT_fillScreen(TFT_WHITE);
+            break;
+        }
     }
 }
 
@@ -63,8 +79,10 @@ void app_main(void)
     m5_init();
 
     // Register for button events
-    esp_event_handler_register_with(m5_event_loop, M5BUTTON_EVENT_BASE, M5BUTTON_BUTTON_A_CLICK, my_m5_event_handler, NULL);
-    esp_event_handler_register_with(m5_event_loop, M5BUTTON_EVENT_BASE, M5BUTTON_BUTTON_A_HOLD, my_m5_event_handler, NULL);
+    esp_event_handler_register_with(m5_event_loop, M5BUTTON_A_EVENT_BASE, M5BUTTON_BUTTON_CLICK_EVENT, my_m5_event_handler, NULL);
+    esp_event_handler_register_with(m5_event_loop, M5BUTTON_A_EVENT_BASE, M5BUTTON_BUTTON_HOLD_EVENT, my_m5_event_handler, NULL);
+    esp_event_handler_register_with(m5_event_loop, M5BUTTON_B_EVENT_BASE, M5BUTTON_BUTTON_CLICK_EVENT, my_m5_event_handler, NULL);
+    esp_event_handler_register_with(m5_event_loop, M5BUTTON_B_EVENT_BASE, M5BUTTON_BUTTON_HOLD_EVENT, my_m5_event_handler, NULL);
 
     font_rotate = 0;
     text_wrap = 0;
