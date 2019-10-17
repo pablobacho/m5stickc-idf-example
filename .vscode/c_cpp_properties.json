@@ -7,6 +7,7 @@
                 "${IDF_PATH}/components/**",
                 "${workspaceFolder}/build/include"
             ],
+            "forcedInclude": ["${workspaceFolder}/build/include/sdkconfig.h"],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "databaseFilename": ""
